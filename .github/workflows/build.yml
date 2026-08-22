@@ -1,0 +1,60 @@
+name: build-arm64-port
+
+# Cross-builds the AGS engine for aarch64, audits architecture, blocks
+# proprietary game data, and publishes the PortMaster package (spec §32).
+# NEVER uploads The Cat Lady game data.
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard — no proprietary game data may be tracked (spec §32)
+        run: |
+          set -e
+          BAD="$(git ls-files | grep -EI 'TheCatLady\.ags$|TheCatLady\.exe$|TheCatLady\.[0-9]{3}$|audio\.vox$|speech\.vox$|\.tra$|libagsteam\.so$|agsteam\.dll$|steam_api' || true)"
+          if [ -n "$BAD" ]; then
+            echo "Forbidden proprietary files are tracked in git:"; echo "$BAD"; exit 1
+          fi
+          echo "OK: no proprietary game data tracked."
+
+      - name: Set up QEMU (arm64 emulation)
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build aarch64 engine + stage runtime
+        run: |
+          chmod +x scripts/*.sh
+          ./scripts/docker-build.sh
+
+      - name: Architecture audit (spec §14)
+        run: ./scripts/audit-arch.sh
+
+      - name: Verify licenses present (spec §25)
+        run: |
+          ls -l port/thecatlady/thecatlady/licenses/ || true
+          test -f LICENSES.md || { echo "LICENSES.md missing"; exit 1; }
+
+      - name: Build PortMaster package
+        run: |
+          sudo apt-get update && sudo apt-get install -y zip unzip
+          ./scripts/make-portmaster-package.sh
+
+      - name: Upload PortMaster package (no game data)
+        uses: actions/upload-artifact@v4
+        with:
+          name: thecatlady-r36s-portmaster
+          path: dist/*.zip
+          if-no-files-found: error

@@ -1,0 +1,45 @@
+{
+  "version": 3,
+  "name": "thecatlady",
+  "items": [
+    "The Cat Lady.sh",
+    "thecatlady"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "The Cat Lady",
+    "porter": [
+      "thecatlady-r36s project"
+    ],
+    "desc": "Native AArch64 port of the psychological horror adventure The Cat Lady, running on an open-source Adventure Game Studio engine. No x86 emulation. Requires you to copy the data files from your own legally-owned copy of the game.",
+    "desc_md": null,
+    "inst": "This port does NOT include the game. You must own The Cat Lady (Steam app 253110). Copy these files from your installed copy into: /roms/ports/thecatlady/gamedata/  -> TheCatLady.ags (Linux) OR TheCatLady.exe (Windows), plus TheCatLady.001/.002 if present, audio.vox, speech.vox, and any *.tra languages (e.g. Portuguese.tra). Do NOT copy ags32/ags64/lib32/lib64. See README.md.",
+    "inst_md": null,
+    "genres": [
+      "adventure",
+      "horror",
+      "point-and-click"
+    ],
+    "image": {
+      "screenshot": "screenshot.png",
+      "cover": "cover.png"
+    },
+    "rtr": false,
+    "exp": false,
+    "runtime": null,
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": "",
+    "arch_extra": {},
+    "avail": [],
+    "store": [
+      {
+        "type": "steam",
+        "id": "253110",
+        "url": "https://store.steampowered.com/app/253110/The_Cat_Lady/"
+      }
+    ]
+  }
+}

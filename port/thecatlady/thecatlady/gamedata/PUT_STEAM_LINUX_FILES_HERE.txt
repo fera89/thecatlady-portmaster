@@ -1,0 +1,27 @@
+Put your OWN copy of The Cat Lady's data files in THIS folder.
+=============================================================
+
+This port does not include the game. You need a copy you legally own
+(Steam app 253110). AGS game data is the same across platforms, so files
+from either the Windows or the Linux version work.
+
+REQUIRED (copy into this folder):
+  - TheCatLady.ags        (Linux depot)   OR   TheCatLady.exe   (Windows/Steam)
+  - audio.vox
+  - speech.vox
+
+ALSO COPY IF PRESENT:
+  - TheCatLady.001, TheCatLady.002   (split asset archives)
+  - the translation you want, e.g.  Portuguese.tra
+
+DO NOT COPY (not used, may confuse the launcher):
+  - ags32, ags64, lib32/, lib64/
+  - agsteam.dll / libagsteam.so, steam_api.dll / libsteam_api.so
+
+Where to find them:
+  Steam -> right-click The Cat Lady -> Manage -> Browse local files.
+  On Windows the default path is typically:
+    ...\steamapps\common\TheCatLady\
+
+After copying, delete this file if you like — the launcher only checks for the
+files listed above.

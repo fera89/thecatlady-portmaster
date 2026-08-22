@@ -1,0 +1,17 @@
+# The port runs on Linux/ArkOS. Shell scripts and config MUST stay LF or they
+# break on the device (e.g. `#!/bin/bash\r`). Force LF for everything textual.
+* text=auto eol=lf
+
+*.sh    text eol=lf
+*.gptk  text eol=lf
+*.cfg   text eol=lf
+*.env   text eol=lf
+*.py    text eol=lf
+Dockerfile text eol=lf
+
+# Treat known binaries as binary (never touched by EOL normalisation).
+*.png binary
+*.zip binary
+*.vox binary
+*.ags binary
+*.tra binary

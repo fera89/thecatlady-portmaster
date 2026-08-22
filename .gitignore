@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------------
+# Proprietary game data — MUST NEVER be committed (spec §4, §32).
+# These belong only in the user's local gamedata/ directory on the device.
+# ---------------------------------------------------------------------------
+TheCatLady.ags
+TheCatLady.exe
+TheCatLady.[0-9][0-9][0-9]
+audio.vox
+speech.vox
+*.tra
+agsteam.dll
+libagsteam.so
+steam_api.dll
+libsteam_api.*
+steam_appid.txt
+ags32
+ags64
+lib32/
+lib64/
+
+# But DO keep the placeholder that tells users where to put their files:
+!port/thecatlady/thecatlady/gamedata/PUT_STEAM_LINUX_FILES_HERE.txt
+
+# ---------------------------------------------------------------------------
+# Build artifacts and fetched upstream source
+# ---------------------------------------------------------------------------
+/build/*
+!/build/.gitkeep
+/upstream/ags/
+*.o
+*.a
+*.so.debug
+dist/
+*.zip
+
+# Staged runtime binaries (produced by build/stage scripts, not source)
+/port/thecatlady/thecatlady/bin/ags
+/port/thecatlady/thecatlady/bin/validate-game-files
+/port/thecatlady/thecatlady/lib/*.so*
+
+# ---------------------------------------------------------------------------
+# Editor / OS noise
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

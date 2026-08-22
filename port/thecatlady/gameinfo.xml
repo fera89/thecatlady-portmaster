@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Optional frontend metadata. Current PortMaster packaging is driven by
+  port.json (see this directory). gameinfo.xml is kept because the project spec
+  (§8, §24) requests it and some frontends read a gamelist-style entry.
+-->
+<gameList>
+  <game>
+    <path>./The Cat Lady.sh</path>
+    <name>The Cat Lady</name>
+    <desc>Psychological horror adventure by Harvester Games, running on a native AArch64 Adventure Game Studio runtime. Requires game data from your own copy.</desc>
+    <developer>Harvester Games</developer>
+    <publisher>Screen 7</publisher>
+    <genre>Adventure / Horror</genre>
+    <players>1</players>
+    <image>./screenshot.png</image>
+    <thumbnail>./cover.png</thumbnail>
+    <rtr>false</rtr>
+  </game>
+</gameList>
