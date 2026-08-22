@@ -1,0 +1,49 @@
+# gptokeyb2 mapping for The Cat Lady on R36S (spec §19).
+#
+# PROVISIONAL. The Cat Lady's exact default keys must be confirmed by on-device
+# testing (Milestone 6) before this is finalised in docs/CONTROLS.md. This layout
+# is deliberately universal for an AGS mouse+keyboard adventure: the left stick
+# drives the mouse cursor, A/B are the mouse buttons, the D-pad doubles as arrow
+# keys, and face/shoulder buttons cover the common menu/inventory keys.
+#
+# Loaded by "The Cat Lady.sh" via the PortMaster-provided $GPTOKEYB binary.
+
+# --- pointer: left analog stick moves the mouse cursor ---------------------
+left_analog_up = mouse_movement_up
+left_analog_down = mouse_movement_down
+left_analog_left = mouse_movement_left
+left_analog_right = mouse_movement_right
+mouse_scale = 6144
+mouse_delay = 16
+deadzone = 4000
+deadzone_mode = axial
+
+# --- mouse buttons --------------------------------------------------------
+a = mouse_left      # primary action: walk / interact
+b = mouse_right     # secondary action: examine / change verb
+
+# --- D-pad doubles as arrow keys (menu + any keyboard movement) -----------
+up = up
+down = down
+left = left
+right = right
+
+# --- face buttons (PROVISIONAL keyboard actions — verify on device) --------
+x = i               # inventory (guess)
+y = space           # continue / skip dialog (guess)
+
+# --- system buttons -------------------------------------------------------
+start = enter       # confirm / advance
+back = escape       # menu / cancel   (Select)
+guide = escape
+
+# --- shoulders (convenience — verify) -------------------------------------
+l1 = pageup
+r1 = pagedown
+l2 = mouse_left
+r2 = mouse_right
+
+# Hotkey to quit back to PortMaster: hold Select + Start.
+# (gptokeyb interprets this and sends SIGTERM; the launcher traps it.)
+hotkey = back
+back_start = kill

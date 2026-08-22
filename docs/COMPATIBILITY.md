@@ -4,20 +4,26 @@
 
 Fill in as milestones are verified. `—` = not yet tested.
 
+Legend: ✅ pass · 🟡 pass under qemu emulation (not real hardware) · — untested.
+
 | Test | x86_64 Linux | ARM64 build | R36S |
 |---|:--:|:--:|:--:|
-| AGS starts       | — | — | — |
-| Game detected    | — | — | — |
+| AGS starts       | ✅ | 🟡 | — |
+| Game detected    | ✅ | 🟡 | — |
 | Main menu        | — | — | — |
 | New game         | — | — | — |
-| Audio            | — | — | — |
-| Speech           | — | — | — |
+| Audio (init)     | ✅ | 🟡 | — |
+| Speech (detected)| ✅ | 🟡 | — |
 | Video            | — | — | — |
 | Input            | — | — | — |
 | Portuguese       | — | — | — |
 | Save             | — | — | — |
 | Load             | — | — | — |
-| Clean exit       | — | — | — |
+| Clean exit       | ✅ | 🟡 | — |
+
+x86_64 and ARM64 were validated headless (dummy SDL video/audio); "Main menu"
+and gameplay require a real display, i.e. the R36S. Both builds reached
+"Engine initialization complete" → "Starting game" against the real Steam data.
 
 ## Environment record (fill from the device)
 
@@ -53,7 +59,11 @@ record which one works:
 - If boot fails with an unresolved import: record the **exact** symbol name from
   `ags.log`, check AGS built-in plugin coverage, and only then consider a minimal
   no-op compatibility shim (Strategy B/C). Never copy the x86 `libagsteam.so`.
-- Result observed: — (fill after Milestone 2).
+- **Result observed (2026-08-22, Milestone 2 PASS):** with `--no-plugins`,
+  `agsteam` → *"Placeholder functions for the plugin 'agsteam' found"* (built-in
+  stub); `agsblend` → built-in. `agsd3dvsync` has no stub and logs *"The game
+  might fail to load!"*, but The Cat Lady does not import it, so boot proceeds to
+  "Starting game" normally. Strategy A works; no shim needed.
 
 ## Video (spec §7)
 

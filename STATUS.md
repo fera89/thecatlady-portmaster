@@ -1,16 +1,32 @@
 # STATUS
 
-Progress report in the spec §36 format. Updated 2026-08-21.
+Progress report in the spec §36 format. Updated 2026-08-22.
 
-Development environment for this pass: **Windows 11** with git + Git-Bash only —
-**no WSL, no Docker, no local Linux toolchain, no physical R36S**. Everything that
-requires compiling ARM code or running on the device is therefore scripted and
-verified-by-design, to be executed by the user via Docker/CI/device.
+Build environment: **WSL2 Ubuntu 24.04** (x86_64, glibc 2.39) with an aarch64
+cross toolchain + qemu-user-static. The physical **R36S is available** for the
+on-device milestones.
 
 ---
 
 ## DONE
 
+- **Milestone 1 — desktop x86_64 validation. PASS.** Built AGS 3.6.2.21 for
+  x86_64 in WSL and booted it headless against the user's real Steam data: reads
+  the Windows `TheCatLady.exe` embedded data ("game28.dta", made with AGS
+  3.4.1.11), finds `speech.vox` + `audio.vox`, reaches "Engine initialization
+  complete" → "Starting game". No data modified.
+- **Milestone 2 — AGSteam independence. PASS.** With `--no-plugins` the engine
+  reports *"Placeholder functions for the plugin 'agsteam' found"* (built-in
+  stub) and `agsblend` built-in. `agsd3dvsync` has no stub but the game does not
+  import it, so boot is unaffected. Achievements unavailable, gameplay fine.
+- **Milestone 3 — aarch64 engine build. PASS.** Cross-compiled to
+  `ELF 64-bit ... ARM aarch64` (multiarch + qemu for CMake try_run). Dynamic
+  deps are core-only: `libstdc++, libm, libgcc_s, libc, ld-linux-aarch64` —
+  SDL2/ogg/vorbis/theora are statically linked, so **no `.so` bundling needed**.
+- **Milestone 4 — AGS ARM smoke test (under qemu emulation). PASS.** The arm64
+  binary loads The Cat Lady and reaches "Starting game" exactly like x86_64.
+- **Packaging. PASS.** `dist/thecatlady-r36s-*.zip` (2.9 MB) built by the repo
+  scripts; architecture audit passes; no proprietary data; licenses included.
 - **Milestone 0 — repository bootstrap.** Full tree, `.gitignore`, README,
   version pin, all scripts, PortMaster skeleton, docs.
 - **Version pin (Step 2).** AGS `3.6.2.21` @ `810192970…` recorded with the
@@ -36,32 +52,30 @@ verified-by-design, to be executed by the user via Docker/CI/device.
 - **Docs** — architecture, build, device testing, Steam files, compatibility
   matrix, controls, troubleshooting.
 
-## BLOCKED (need something not present in this environment)
+## OPEN RISK — glibc target
 
-- **Actually compiling the ARM binary here.** No WSL/Docker/cmake on this
-  Windows host. → Resolved by design: run `./scripts/docker-build.sh` (needs
-  Docker Desktop) **or** push to GitHub for the CI build. No code change needed.
-- **Milestone 1 (desktop x86_64 Linux validation).** Needs a Linux/WSL2 box or
-  CI. The headless [smoke-test.sh](scripts/smoke-test.sh) automates it once a
-  build exists.
+The engine was built on Ubuntu 24.04 (**glibc 2.39**). ArkOS on the R36S is
+likely older (commonly glibc ~2.31). A binary built against a newer glibc will
+fail on an older one (`GLIBC_2.xx not found`). **Action:** confirm the device's
+`ldd --version`; if it is < 2.39, rebuild the engine against that older glibc
+(e.g. in a Debian bullseye arm64 rootfs under qemu) — no code change, just a
+different build base. This is the only thing between the current package and a
+first device boot.
 
-## NEEDS DEVICE TEST (physical R36S required)
+## NEEDS DEVICE TEST (physical R36S available)
 
-- **M3** ARM engine runs on device · **M4** AGS smoke test · **M5** The Cat Lady
-  boots to menu · **M6** controller mapping finalised · **M7** gameplay systems
-  (rooms/dialog/inventory/speech/music/SFX/save/load/Portuguese/exit) ·
-  **M8** endurance · sprite-cache tuning after measuring `VmRSS`/`VmHWM` (spec §22).
+- **M5** The Cat Lady boots to menu · **M6** controller mapping finalised ·
+  **M7** gameplay systems (rooms/dialog/inventory/speech/music/SFX/save/load/
+  Portuguese/exit) · **M8** endurance · sprite-cache tuning after measuring
+  `VmRSS`/`VmHWM` (spec §22).
 - Record results in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and save at
   least one real device log (spec §27).
 
 ## NEXT (recommended order)
 
-1. **Build the engine** — install Docker Desktop and run
-   `./scripts/docker-build.sh`, *or* push this repo to GitHub and download the CI
-   artifact.
-2. **Milestone 1** — run `scripts/smoke-test.sh --ags <built-ags> --gamedata
-   <your-gamedata>` to confirm the modern engine loads The Cat Lady headlessly
-   and that AGSteam is handled by built-in stubs.
-3. **Package** — `./scripts/make-portmaster-package.sh` → `dist/*.zip`.
-4. **On device** — deploy, copy game data, and work Milestones 5–8, filling in
-   the compatibility matrix and controls doc.
+1. **Confirm device glibc/OS** (`ldd --version`, `uname -m`, `/etc/os-release`)
+   and rebuild against that glibc if needed.
+2. **Deploy** `dist/*.zip` to the R36S, copy game data into `gamedata/`, launch.
+3. **Milestones 5–8** on device; fill the compatibility matrix and finalise
+   `docs/CONTROLS.md`.
+4. Add `screenshot.png` / `cover.png` for PortMaster before any submission.
