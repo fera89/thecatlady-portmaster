@@ -43,10 +43,7 @@ install -m 0644 "$ROOT/runtime/config/acsetup-r36s.cfg" "$INNER/config/acsetup.c
 # launcher references as $GAMEDIR/thecatlady.gptk and $GAMEDIR/asoundrc.
 install -m 0644 "$ROOT/runtime/controls/thecatlady.gptk" "$INNER/thecatlady.gptk"
 install -m 0644 "$ROOT/runtime/config/asoundrc" "$INNER/asoundrc"
-install -m 0644 "$ROOT/runtime/perf-governor.inc" "$INNER/perf-governor.inc"
-# run.sh is tracked directly in the port dir; ensure it is present
-[ -f "$INNER/run.sh" ] || install -m 0755 "$ROOT/port/thecatlady/thecatlady/run.sh" "$INNER/run.sh"
-echo "[OK] staged validator, acsetup.cfg, thecatlady.gptk, asoundrc, perf-governor.inc"
+echo "[OK] staged validator, acsetup.cfg, thecatlady.gptk, asoundrc"
 
 # --- licenses (spec §25) ---------------------------------------------------
 if [ -f "$ROOT/LICENSES.md" ]; then

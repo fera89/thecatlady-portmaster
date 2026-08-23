@@ -87,42 +87,18 @@ echo "engine: $("$GAMEDIR/bin/ags" --version 2>/dev/null | tail -1)"
 # ArkOS ALSA dmix fix
 [[ "$CFW_NAME" == *"ArkOS"* ]] && [ -f "$GAMEDIR/asoundrc" ] && cp "$GAMEDIR/asoundrc" "$HOME/.asoundrc"
 
-# --- CPU/GPU governor -> performance (biggest perf lever; restored on exit) --
-if [ "${TCL_NO_GOVERNOR:-0}" != "1" ] && [ -f "$GAMEDIR/perf-governor.inc" ]; then
-  source "$GAMEDIR/perf-governor.inc"
-fi
-
-# --- optional vsync override (per-launcher A/B test) ------------------------
-CONF="$GAMEDIR/config/acsetup.cfg"
-if [ -n "${TCL_VSYNC:-}" ]; then
-  CONF="$GAMEDIR/config/acsetup-$TAG.cfg"
-  sed "s/^vsync=.*/vsync=$TCL_VSYNC/" "$GAMEDIR/config/acsetup.cfg" > "$CONF"
-  echo "vsync override: $TCL_VSYNC"
-fi
-
-# --- memory logging (to tune sprite cache safely) --------------------------
-echo "-- free -m (before) --"; free -m 2>/dev/null | head -2
-( MEMLOG="$GAMEDIR/logs/mem-$TAG.log"; : > "$MEMLOG"
-  while sleep 4; do
-    p="$(pgrep -n ags 2>/dev/null)"; [ -z "$p" ] && continue
-    echo "$(date +%T) VmHWM=$(awk '/VmHWM/{print $2}' /proc/$p/status 2>/dev/null)kB $(free -m | awk '/Mem:/{print "used="$3" avail="$7"MB"}')" >> "$MEMLOG"
-  done ) &
-MEMPID=$!
-
 VAL="$(bash "$GAMEDIR/bin/validate-game-files" "$GAMEDIR/gamedata" 2>&1)"; echo "$VAL"
 MAIN="$(printf '%s\n' "$VAL" | sed -n 's/^RESULT_MAIN=//p' | tail -n1)"; [ -z "$MAIN" ] && MAIN="TheCatLady.exe"
 
 $GPTOKEYB "ags" -c "$GAMEDIR/thecatlady.gptk" &
 pm_platform_helper "$GAMEDIR/bin/ags" 2>/dev/null
 
-echo "----- launching ags (gfx=$GFX, conf=$(basename "$CONF")) -----"
+echo "----- launching ags (gfx=$GFX) -----"
 "$GAMEDIR/bin/ags" \
     --no-plugins --fullscreen --gfxdriver "$GFX" \
-    --conf "$CONF" \
-    --log-file-path "$GAMEDIR/logs/ags-$TAG.log" --log-file=all:all \
+    --conf "$GAMEDIR/config/acsetup.cfg" \
+    --log-file-path "$GAMEDIR/logs/ags-$TAG.log" --log-file=all:info \
     "$GAMEDIR/gamedata/$MAIN"
 echo "----- ags exited: $? -----"
 
-kill "$MEMPID" 2>/dev/null
-type _tcl_gov_restore >/dev/null 2>&1 && _tcl_gov_restore
 pm_finish
