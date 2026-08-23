@@ -30,6 +30,7 @@ back = escape    # Select -> menu (also the quit hotkey modifier)
 l1 = down        # inventory
 r1 = up          # interact
 
-# --- hold Select + Start to quit back to PortMaster -------------------------
-hotkey = back
-back_start = kill
+# NOTE: do NOT define a hotkey/kill combo here. gptokeyb2 is launched with
+# "-sudokill" (from control.txt on ArkOS), which handles quit (Select+Start)
+# natively. Defining back_start=kill here reserved Start and stopped it from
+# sending its own key.
