@@ -16,7 +16,7 @@ ARG AGS_REPO=https://github.com/adventuregamestudio/ags.git
 ARG AGS_GIT_COMMIT=810192970bfa8859041bca6f50ff6d9eba190036
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      git ca-certificates cmake ninja-build build-essential pkg-config \
+      git ca-certificates cmake ninja-build build-essential pkg-config file \
       libsdl2-dev libogg-dev libvorbis-dev libtheora-dev \
       libfreetype-dev zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -50,7 +50,7 @@ RUN set -eux; \
     test -n "$BIN"; \
     mkdir -p /out/bin /out/lib; \
     cp "$BIN" /out/bin/ags; \
-    aarch64-linux-gnu-strip /out/bin/ags || true; \
+    strip /out/bin/ags || true; \
     # bundle SDL2 + codec libs, skip the core system/loader libs that ArkOS has
     ldd /out/bin/ags | awk '/=>/{print $3}' | while read -r so; do \
         case "$so" in \

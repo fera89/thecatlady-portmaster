@@ -25,8 +25,17 @@ on-device milestones.
   SDL2/ogg/vorbis/theora are statically linked, so **no `.so` bundling needed**.
 - **Milestone 4 — AGS ARM smoke test (under qemu emulation). PASS.** The arm64
   binary loads The Cat Lady and reaches "Starting game" exactly like x86_64.
-- **Packaging. PASS.** `dist/thecatlady-r36s-*.zip` (2.9 MB) built by the repo
+- **Device-target build. PASS.** Rebuilt the engine in a Debian bullseye arm64
+  chroot (gcc-10) with `-static-libstdc++ -static-libgcc` and `SDL_WAYLAND=OFF`.
+  Result verified: `ELF aarch64`, **max GLIBC required = 2.30** (<= device 2.31),
+  **no GLIBCXX/SDL2 runtime deps** (NEEDED = libdl/libm/libpthread/libc only).
+  Smoke-tested under qemu: reaches "Starting game" on the real Steam data.
+- **Packaging. PASS.** `dist/thecatlady-r36s-*.zip` (3.0 MB) built by the repo
   scripts; architecture audit passes; no proprietary data; licenses included.
+- **Installed on the user's actual R36S card. PASS.** Copied the port to
+  `/roms/ports/` (EASYROMS/exFAT): launcher + engine + config + gptk + asoundrc +
+  licenses, and the user's game data (1.39 GB) into `gamedata/`. The installed
+  validator confirms all data on-card; all scripts/configs are LF.
 - **Milestone 0 — repository bootstrap.** Full tree, `.gitignore`, README,
   version pin, all scripts, PortMaster skeleton, docs.
 - **Version pin (Step 2).** AGS `3.6.2.21` @ `810192970…` recorded with the
@@ -82,9 +91,10 @@ target for the actual device package.
 
 ## NEXT (recommended order)
 
-1. **Confirm device glibc/OS** (`ldd --version`, `uname -m`, `/etc/os-release`)
-   and rebuild against that glibc if needed.
-2. **Deploy** `dist/*.zip` to the R36S, copy game data into `gamedata/`, launch.
-3. **Milestones 5–8** on device; fill the compatibility matrix and finalise
-   `docs/CONTROLS.md`.
+1. **Boot on device (M5).** Put the card back in the R36S, open Ports → "The Cat
+   Lady". Expect: title/menu at 640×480. Grab `thecatlady/logs/ags.log` +
+   `launcher.log` if anything is off.
+2. **M6 controls** — verify/adjust `thecatlady.gptk` (mapping is provisional).
+3. **M7 gameplay** — rooms/dialog/inventory/speech/music/SFX/save/load/
+   Portuguese/exit; **M8** endurance. Fill the compatibility matrix.
 4. Add `screenshot.png` / `cover.png` for PortMaster before any submission.
