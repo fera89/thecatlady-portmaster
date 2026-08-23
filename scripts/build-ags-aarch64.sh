@@ -40,8 +40,16 @@ cmake "${GEN[@]}" \
     -DAGS_BUILD_TOOLS=OFF \
     -DAGS_BUILD_COMPILER=OFF \
     -DAGS_TESTS=OFF \
+    -DSDL_WAYLAND=OFF -DSDL_WAYLAND_SHARED=OFF \
+    -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc" \
     "${EXTRA_CMAKE_ARGS:-}"
-    # NOTE: AGS_NO_VIDEO_PLAYER is intentionally left OFF (video stays enabled, spec §7).
+    # NOTES:
+    #  - AGS_NO_VIDEO_PLAYER left OFF -> video stays enabled (spec §7).
+    #  - SDL_WAYLAND=OFF: AGS builds its own SDL2; the R36S/ArkOS uses KMSDRM/X11.
+    #    (Also avoids failing against an old wayland in a glibc-2.31 sysroot.)
+    #  - static libstdc++/libgcc: only glibc matters at runtime. Use a sysroot
+    #    whose glibc is <= the device's (R36S/ArkOS = 2.31); the Docker path
+    #    (docker/Dockerfile, debian:bullseye) is the tested way to get that.
 
 echo "== Building =="
 cmake --build "$BUILD" --config Release -j"$(nproc 2>/dev/null || echo 4)"

@@ -52,15 +52,24 @@ on-device milestones.
 - **Docs** — architecture, build, device testing, Steam files, compatibility
   matrix, controls, troubleshooting.
 
-## OPEN RISK — glibc target
+## Device target — CONFIRMED
 
-The engine was built on Ubuntu 24.04 (**glibc 2.39**). ArkOS on the R36S is
-likely older (commonly glibc ~2.31). A binary built against a newer glibc will
-fail on an older one (`GLIBC_2.xx not found`). **Action:** confirm the device's
-`ldd --version`; if it is < 2.39, rebuild the engine against that older glibc
-(e.g. in a Debian bullseye arm64 rootfs under qemu) — no code change, just a
-different build base. This is the only thing between the current package and a
-first device boot.
+Inspected the user's actual R36S SD card:
+- Device **R36S / RK3326**, **ArkOS** (dArkOS/arkos4clone base = Ubuntu focal),
+  PortMaster 2024.07.17 installed, `/roms` on the exFAT EASYROMS partition.
+- **glibc 2.31** — established empirically (working ports need up to glibc 2.30:
+  undertale 2.30, gptokeyb 2.29) and from the ArkOS base (focal). Target locked
+  to **glibc 2.31**.
+- Launcher verified against the device's real `control.txt` + working port
+  launchers (undertale.sh, render96ex.sh): `directory=roms`, `get_controls`,
+  `$GPTOKEYB ... -c x.gptk`, `pm_platform_helper`, `pm_finish`, and the ArkOS
+  `~/.asoundrc` dmix audio fix — all incorporated.
+
+The engine is therefore built in a **Debian bullseye (glibc 2.31) arm64** chroot
+with `-static-libstdc++ -static-libgcc` and `SDL_WAYLAND=OFF`, so the only runtime
+dependency is glibc <= 2.31 (safe on this device and newer). The earlier Ubuntu
+24.04 (glibc 2.39) binary was correct for validation but is being rebuilt on this
+target for the actual device package.
 
 ## NEEDS DEVICE TEST (physical R36S available)
 

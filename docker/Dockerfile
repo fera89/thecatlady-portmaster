@@ -8,7 +8,9 @@
 # so `--output type=local` extracts a clean artifact with no build junk.
 
 # ---------------------------------------------------------------------------
-FROM debian:bookworm-slim AS builder
+# bullseye = glibc 2.31, matching the ArkOS R36S target (device has glibc 2.31).
+# A binary built here runs on glibc >= 2.31 (i.e. this device and newer).
+FROM debian:bullseye-slim AS builder
 
 ARG AGS_REPO=https://github.com/adventuregamestudio/ags.git
 ARG AGS_GIT_COMMIT=810192970bfa8859041bca6f50ff6d9eba190036
@@ -27,12 +29,19 @@ RUN git clone --no-checkout "$AGS_REPO" ags \
     && git submodule update --init --recursive
 
 # Video stays ENABLED (spec §7). Engine only (spec §12).
+# - SDL_WAYLAND=OFF: AGS builds its own SDL2; bullseye's wayland (1.18) is too old
+#   and the R36S/ArkOS uses KMSDRM/X11, not wayland.
+# - static libstdc++/libgcc: makes the device's GLIBCXX version irrelevant, so
+#   only glibc (2.31) matters for compatibility.
 RUN cmake -G Ninja -S /src/ags -B /build \
       -DCMAKE_BUILD_TYPE=Release \
       -DAGS_BUILD_ENGINE=ON \
       -DAGS_BUILD_TOOLS=OFF \
       -DAGS_BUILD_COMPILER=OFF \
       -DAGS_TESTS=OFF \
+      -DSDL_WAYLAND=OFF -DSDL_WAYLAND_SHARED=OFF \
+      -DCMAKE_C_FLAGS="-march=armv8-a" -DCMAKE_CXX_FLAGS="-march=armv8-a" \
+      -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc" \
     && cmake --build /build -j"$(nproc)"
 
 # Collect the binary + its non-system shared-lib dependencies into /out.
