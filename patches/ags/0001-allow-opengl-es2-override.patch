@@ -1,0 +1,16 @@
+diff --git a/Common/core/platform.h b/Common/core/platform.h
+index ebf59b889..858cdbdda 100644
+--- a/Common/core/platform.h
++++ b/Common/core/platform.h
+@@ -174,9 +174,11 @@
+                         AGS_PLATFORM_OS_EMSCRIPTEN || \
+                         AGS_PLATFORM_OS_FREEBSD    || \
+                         AGS_PLATFORM_OS_MACOS)
++#ifndef AGS_OPENGL_ES2
+ #define AGS_OPENGL_ES2 (AGS_PLATFORM_OS_ANDROID    || \
+                         AGS_PLATFORM_OS_EMSCRIPTEN || \
+                         AGS_PLATFORM_OS_IOS)
++#endif
+
+ // Only allow searching around for game data on desktop systems;
+ // otherwise use explicit argument either from program wrapper, command-line

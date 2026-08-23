@@ -35,8 +35,10 @@ dist/
 
 # Staged runtime binaries (produced by build/stage scripts, not source)
 /port/thecatlady/thecatlady/bin/ags
+/port/thecatlady/thecatlady/bin/ags-gles2
 /port/thecatlady/thecatlady/bin/validate-game-files
 /port/thecatlady/thecatlady/lib/*.so*
+/port/thecatlady/thecatlady/config/acsetup-*.cfg
 
 # ---------------------------------------------------------------------------
 # Editor / OS noise

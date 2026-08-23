@@ -31,6 +31,7 @@ mkdir -p "$GAMEDIR/saves" "$GAMEDIR/logs" "$GAMEDIR/config"
 
 TAG="${TCL_TAG:-default}"
 GFX="${TCL_GFXDRIVER:-software}"
+AGSBIN="${TCL_AGS_BIN:-ags}"     # allow an alternate engine binary (e.g. ags-gles2)
 LOG="$GAMEDIR/logs/run-$TAG.log"
 : > "$LOG" && exec > >(tee "$LOG") 2>&1
 
@@ -77,12 +78,12 @@ if [ -n "${TCL_SDL_VIDEODRIVER:-}" ]; then export SDL_VIDEODRIVER="$TCL_SDL_VIDE
 echo "profile: gl4es=${TCL_GL4ES:-0}  AGS gfx=$GFX  SDL_VIDEODRIVER='${SDL_VIDEODRIVER:-(auto)}'"
 echo "LIBGL: ES=${LIBGL_ES:-} GL=${LIBGL_GL:-} FB=${LIBGL_FB:-}"
 echo "SDL_VIDEO_GL_DRIVER=${SDL_VIDEO_GL_DRIVER:-}  SDL_VIDEO_EGL_DRIVER=${SDL_VIDEO_EGL_DRIVER:-}"
-echo "engine NEEDED SDL: $(readelf -d "$GAMEDIR/bin/ags" 2>/dev/null | grep -oE 'libSDL2[^]]*' | head -1 || echo '<static>')"
+echo "engine NEEDED SDL: $(readelf -d "$GAMEDIR/bin/$AGSBIN" 2>/dev/null | grep -oE 'libSDL2[^]]*' | head -1 || echo '<static>')"
 echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 echo "/dev/dri:"; ls -l /dev/dri 2>/dev/null || echo "  (none)"
 
-$ESUDO chmod +x "$GAMEDIR/bin/ags" "$GAMEDIR/bin/validate-game-files" 2>/dev/null
-echo "engine: $("$GAMEDIR/bin/ags" --version 2>/dev/null | tail -1)"
+$ESUDO chmod +x "$GAMEDIR/bin/$AGSBIN" "$GAMEDIR/bin/validate-game-files" 2>/dev/null
+echo "engine: $AGSBIN -> $("$GAMEDIR/bin/$AGSBIN" --version 2>/dev/null | tail -1)"
 
 # ArkOS ALSA dmix fix
 [[ "$CFW_NAME" == *"ArkOS"* ]] && [ -f "$GAMEDIR/asoundrc" ] && cp "$GAMEDIR/asoundrc" "$HOME/.asoundrc"
@@ -90,15 +91,15 @@ echo "engine: $("$GAMEDIR/bin/ags" --version 2>/dev/null | tail -1)"
 VAL="$(bash "$GAMEDIR/bin/validate-game-files" "$GAMEDIR/gamedata" 2>&1)"; echo "$VAL"
 MAIN="$(printf '%s\n' "$VAL" | sed -n 's/^RESULT_MAIN=//p' | tail -n1)"; [ -z "$MAIN" ] && MAIN="TheCatLady.exe"
 
-$GPTOKEYB "ags" -c "$GAMEDIR/thecatlady.gptk" &
-pm_platform_helper "$GAMEDIR/bin/ags" 2>/dev/null
+$GPTOKEYB "$AGSBIN" -c "$GAMEDIR/thecatlady.gptk" &
+pm_platform_helper "$GAMEDIR/bin/$AGSBIN" 2>/dev/null
 
-echo "----- launching ags (gfx=$GFX) -----"
-"$GAMEDIR/bin/ags" \
+echo "----- launching $AGSBIN (gfx=$GFX) -----"
+"$GAMEDIR/bin/$AGSBIN" \
     --no-plugins --fullscreen --gfxdriver "$GFX" \
     --conf "$GAMEDIR/config/acsetup.cfg" \
     --log-file-path "$GAMEDIR/logs/ags-$TAG.log" --log-file=all:info \
     "$GAMEDIR/gamedata/$MAIN"
-echo "----- ags exited: $? -----"
+echo "----- $AGSBIN exited: $? -----"
 
 pm_finish
