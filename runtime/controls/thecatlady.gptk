@@ -18,13 +18,13 @@ deadzone = 6000
 
 # --- face buttons -----------------------------------------------------------
 a = enter        # confirm / select dialogue option
-b = escape       # back / open save-load menu
+b = esc       # back / open save-load menu
 x = space        # skip dialogue
 y = up           # interact (same as D-pad Up)
 
 # --- system buttons ---------------------------------------------------------
-start = escape   # save / load menu
-back = escape    # Select -> menu (also the quit hotkey modifier)
+start = esc   # save / load menu
+back = esc    # Select -> menu (also the quit hotkey modifier)
 
 # --- shoulders (handy duplicates) ------------------------------------------
 l1 = down        # inventory
