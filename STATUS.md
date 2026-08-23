@@ -103,6 +103,18 @@ target for the actual device package.
   `The Cat Lady` (GL4ES+ogl, primary), `(GL4ES FB2)` (LIBGL_FB=2),
   `(GL4ES KMS)` (force SDL kmsdrm), `(Software)` (no GL4ES, reference).
 
+- **WORKING ON DEVICE (2026-08-23):** `The Cat Lady` (system SDL2 + AGS
+  software renderer) boots to the menu and plays in-game on the R36S. The fix
+  was `AGS_USE_LOCAL_SDL2=ON` — the device's own libSDL2 (2.32.10 via LD_PRELOAD)
+  drives the RK3326/Mali display via its `opengles2` renderer; our bundled SDL2
+  could not. Audio, saves, translations all work.
+- **Optimization pass:** software rendering of 800×600 on the Cortex-A35 is
+  CPU-bound (ALSA underruns in the log). Added: **CPU/GPU performance governor**
+  (`perf-governor.inc`, restored on exit) — the main lever; scaling filter set
+  to `stdscale` (GPU-side, cheap); per-run memory logging (`logs/mem-*.log`) to
+  size the sprite cache from real `VmHWM`/free-RAM data; and a `(vsync off)`
+  launcher for A/B testing. Sprite cache kept at 128 MB pending the memory log.
+
 ## NEEDS DEVICE TEST (physical R36S available)
 
 - **M5** The Cat Lady boots to menu · **M6** controller mapping finalised ·
