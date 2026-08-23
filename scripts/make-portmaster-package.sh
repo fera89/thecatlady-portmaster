@@ -38,21 +38,21 @@ STAMP="$(date +%Y%m%d)"
 ZIP="$DIST/thecatlady-r36s-${STAMP}.zip"
 rm -f "$ZIP"
 
-# PortMaster expects the launcher .sh and the inner game dir at the zip root.
+# PortMaster expects the launcher .sh files and the inner game dir at the zip
+# root. We ship several launcher variants (video-profile A/B testing).
 ( cd "$PORT" && zip -r -y "$ZIP" \
-    "The Cat Lady.sh" \
+    *.sh \
     "thecatlady" \
     "port.json" \
     "gameinfo.xml" \
     "README.md" \
-    "screenshot.png" \
-    "cover.png" \
     -x "thecatlady/gamedata/*" \
     -x "thecatlady/saves/*" \
-    -x "thecatlady/logs/*" \
-    2>/dev/null || \
-  cd "$PORT" && zip -r -y "$ZIP" "The Cat Lady.sh" "thecatlady" "port.json" "gameinfo.xml" "README.md" \
-    -x "thecatlady/gamedata/*" -x "thecatlady/saves/*" -x "thecatlady/logs/*" )
+    -x "thecatlady/logs/*" )
+# Optional cover art, only if present.
+for img in screenshot.png cover.png; do
+    [ -f "$PORT/$img" ] && ( cd "$PORT" && zip "$ZIP" "$img" >/dev/null )
+done
 
 # Keep the gamedata placeholder in the zip so the target folder exists.
 ( cd "$PORT" && zip "$ZIP" "thecatlady/gamedata/PUT_STEAM_LINUX_FILES_HERE.txt" >/dev/null )

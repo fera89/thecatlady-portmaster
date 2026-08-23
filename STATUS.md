@@ -80,6 +80,20 @@ dependency is glibc <= 2.31 (safe on this device and newer). The earlier Ubuntu
 24.04 (glibc 2.39) binary was correct for validation but is being rebuilt on this
 target for the actual device package.
 
+## On-device findings
+
+- **First boot (2026-08-23):** audio played (ALSA/asoundrc OK) but the screen
+  stayed on the console (black + blinking cursor). Diagnosed: the bundled SDL2
+  had only `x11/offscreen/dummy` video drivers — **no KMSDRM** — so on ArkOS
+  (no X11) SDL reported "No available video device". Fix: rebuild SDL2 with
+  `SDL_KMSDRM=ON` (+ libdrm/gbm/udev dev in the chroot).
+- To find the working video profile fast, the port now ships **4 launcher
+  variants**, each logging separately to `thecatlady/logs/run-<tag>.log` and
+  `ags-<tag>.log`:
+  `The Cat Lady` (kmsdrm+software), `(KMSDRM GL)` (kmsdrm+ogl),
+  `(Auto SW)` (auto+software), `(Auto GL)` (auto+ogl). Wayland is not viable on
+  ArkOS (no compositor; not built).
+
 ## NEEDS DEVICE TEST (physical R36S available)
 
 - **M5** The Cat Lady boots to menu · **M6** controller mapping finalised ·
