@@ -43,6 +43,15 @@ export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 export XDG_DATA_HOME="$GAMEDIR/saves"
 export XDG_CONFIG_HOME="$GAMEDIR/saves"
 
+# The engine links the SYSTEM libSDL2 (which drives the RK3326/Mali display).
+# The device ships several SDL2 versions; force a recent one via LD_PRELOAD so
+# the engine (needs >= 2.24) always resolves against a compatible SDL2.
+if [ "${TCL_NO_PRELOAD:-0}" != "1" ]; then
+  SYS_SDL="${TCL_SDL_PRELOAD:-$(ls -1 /usr/lib/aarch64-linux-gnu/libSDL2-2.0.so.0.* 2>/dev/null | sort -V | tail -1)}"
+  [ -n "$SYS_SDL" ] && [ -e "$SYS_SDL" ] && export LD_PRELOAD="$SYS_SDL${LD_PRELOAD:+:$LD_PRELOAD}"
+  echo "LD_PRELOAD SDL2: ${SYS_SDL:-<none>}"
+fi
+
 # --- GL4ES path (mirrors the working ports on this device) -----------------
 if [ "${TCL_GL4ES:-0}" = "1" ]; then
   GFX="ogl"
@@ -60,8 +69,15 @@ fi
 
 if [ -n "${TCL_SDL_VIDEODRIVER:-}" ]; then export SDL_VIDEODRIVER="$TCL_SDL_VIDEODRIVER"; else unset SDL_VIDEODRIVER; fi
 
+# Optional explicit EGL/GL driver override (e.g. force the device's Mali blob so
+# SDL's window uses Mali EGL/GBM instead of mesa). Applied last, wins.
+[ -n "${TCL_SDL_EGL_DRIVER:-}" ] && export SDL_VIDEO_EGL_DRIVER="$TCL_SDL_EGL_DRIVER"
+[ -n "${TCL_SDL_GL_DRIVER:-}" ]  && export SDL_VIDEO_GL_DRIVER="$TCL_SDL_GL_DRIVER"
+
 echo "profile: gl4es=${TCL_GL4ES:-0}  AGS gfx=$GFX  SDL_VIDEODRIVER='${SDL_VIDEODRIVER:-(auto)}'"
-echo "LIBGL: ES=${LIBGL_ES:-} GL=${LIBGL_GL:-} FB=${LIBGL_FB:-}  SDL_VIDEO_GL_DRIVER=${SDL_VIDEO_GL_DRIVER:-}"
+echo "LIBGL: ES=${LIBGL_ES:-} GL=${LIBGL_GL:-} FB=${LIBGL_FB:-}"
+echo "SDL_VIDEO_GL_DRIVER=${SDL_VIDEO_GL_DRIVER:-}  SDL_VIDEO_EGL_DRIVER=${SDL_VIDEO_EGL_DRIVER:-}"
+echo "engine NEEDED SDL: $(readelf -d "$GAMEDIR/bin/ags" 2>/dev/null | grep -oE 'libSDL2[^]]*' | head -1 || echo '<static>')"
 echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 echo "/dev/dri:"; ls -l /dev/dri 2>/dev/null || echo "  (none)"
 

@@ -1,8 +1,7 @@
 #!/bin/bash
-# The Cat Lady — GL4ES + OpenGL (primary path for this RK3326/Mali device).
-# Mirrors how the working ports (Penumbra, Perfect Dark) render here.
-# Logs: thecatlady/logs/run-gl4es-ogl.log and ags-gl4es-ogl.log
-export TCL_TAG="gl4es-ogl"
-export TCL_GL4ES="1"
-export TCL_GFXDRIVER="ogl"
+# The Cat Lady — system SDL2 + AGS software renderer (primary).
+# Uses the device's own libSDL2 (which drives the RK3326/Mali display), like the
+# working ports here. Logs: thecatlady/logs/run-sys-sw.log and ags-sys-sw.log
+export TCL_TAG="sys-sw"
+export TCL_GFXDRIVER="software"
 source "$(dirname "$0")/thecatlady/run.sh"
