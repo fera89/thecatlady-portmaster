@@ -1,7 +1,7 @@
 #!/bin/bash
-# The Cat Lady — system SDL2 + AGS software renderer (primary).
-# Uses the device's own libSDL2 (which drives the RK3326/Mali display), like the
-# working ports here. Logs: thecatlady/logs/run-sys-sw.log and ags-sys-sw.log
-export TCL_TAG="sys-sw"
-export TCL_GFXDRIVER="software"
+# The Cat Lady — native GLES2 renderer (GPU-accelerated on the RK3326 Mali).
+# This is the default and only launcher. The engine binary (bin/ags) is the
+# GLES2 build; if the GL context ever fails it falls back to software.
+export TCL_TAG="tcl"
+export TCL_GFXDRIVER="ogl"
 source "$(dirname "$0")/thecatlady/run.sh"

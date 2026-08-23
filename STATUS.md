@@ -115,6 +115,17 @@ target for the actual device package.
   size the sprite cache from real `VmHWM`/free-RAM data; and a `(vsync off)`
   launcher for A/B testing. Sprite cache kept at 128 MB pending the memory log.
 
+- **GPU rendering solved (2026-08-23).** AGS's OpenGL renderer wouldn't create a
+  window on this Mali (desktop-GL path). Built AGS in **native GLES2 mode**
+  (`AGS_OPENGL_ES2` + CMake `AGS_OPENGLES2`, patch in `patches/ags/`), which asks
+  for an EGL/GLES2 context the Mali provides natively — **GPU-accelerated, runs
+  great on device** (this was the real performance fix; GL4ES was never needed).
+- **Finalised to one launcher.** `The Cat Lady` = the GLES2 build (`bin/ags`),
+  `--gfxdriver ogl`. Removed the software/GL4ES/diagnostic launchers and the
+  gl4es libs. Controls remapped to the game's real keys (A=Enter, B/Start=Esc,
+  X=Space, dpad/stick=arrows) and documented in R36S-button terms
+  (README + docs/CONTROLS.md). `antialias=1` for smoother text.
+
 ## NEEDS DEVICE TEST (physical R36S available)
 
 - **M5** The Cat Lady boots to menu · **M6** controller mapping finalised ·

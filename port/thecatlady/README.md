@@ -37,9 +37,18 @@ files are never redistributed and remain yours.
 
 ## Playing
 
-Launch **The Cat Lady** from the Ports menu. Controls (provisional — see the
-project `docs/CONTROLS.md`): left stick = cursor, A = interact, B = examine,
-Start = confirm, Select = menu, hold **Select+Start** to quit.
+Launch **The Cat Lady** from the Ports menu. The game is played entirely with
+these R36S buttons:
+
+| R36S button | What it does |
+|---|---|
+| **D-pad / Left stick ← →** | Move (walk between scenes) |
+| **D-pad / Left stick ↑** (or **Y**, **R1**) | Interact with objects |
+| **D-pad / Left stick ↓** (or **L1**) | Open inventory |
+| **A** | Confirm / choose dialogue option |
+| **X** | Skip dialogue |
+| **B** or **Start** | Save / load menu |
+| **Select + Start** (hold) | Quit back to PortMaster |
 
 ## Notes
 
