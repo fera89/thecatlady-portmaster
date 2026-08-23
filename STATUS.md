@@ -87,12 +87,21 @@ target for the actual device package.
   had only `x11/offscreen/dummy` video drivers — **no KMSDRM** — so on ArkOS
   (no X11) SDL reported "No available video device". Fix: rebuild SDL2 with
   `SDL_KMSDRM=ON` (+ libdrm/gbm/udev dev in the chroot).
-- To find the working video profile fast, the port now ships **4 launcher
-  variants**, each logging separately to `thecatlady/logs/run-<tag>.log` and
-  `ags-<tag>.log`:
-  `The Cat Lady` (kmsdrm+software), `(KMSDRM GL)` (kmsdrm+ogl),
-  `(Auto SW)` (auto+software), `(Auto GL)` (auto+ogl). Wayland is not viable on
-  ArkOS (no compositor; not built).
+- **Second boot (KMSDRM engine):** SDL still could not present. Engine log:
+  `Can't window GBM/EGL surfaces on window creation` (OpenGL) and
+  `SDLRenderer ... 'renderer' is invalid` (software, which also uses GLES on
+  KMSDRM). The game itself ran fine (loaded room 27, decoded the Theora intro,
+  wrote a save) — only the display never reached the panel. Kernel is 4.4.189
+  and the Mali blob provides fbdev EGL, not GBM/KMS EGL that SDL's KMSDRM needs.
+- **Fix: GL4ES.** The working ports here (Penumbra, Perfect Dark) render via
+  GL4ES, which builds a Mali-compatible EGL context. Built an **aarch64 GL4ES**
+  (libGL+libEGL, glibc <=2.27) and bundled it as `thecatlady/gl4es.aarch64/`.
+  The runner sources PortMaster's `libgl_default.txt` and points
+  `SDL_VIDEO_GL_DRIVER`/`SDL_VIDEO_EGL_DRIVER` at GL4ES, then runs AGS with
+  `--gfxdriver ogl` — mirroring Penumbra.
+- **4 launcher variants** (each logs to `run-<tag>.log`/`ags-<tag>.log`):
+  `The Cat Lady` (GL4ES+ogl, primary), `(GL4ES FB2)` (LIBGL_FB=2),
+  `(GL4ES KMS)` (force SDL kmsdrm), `(Software)` (no GL4ES, reference).
 
 ## NEEDS DEVICE TEST (physical R36S available)
 

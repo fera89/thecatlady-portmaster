@@ -24,6 +24,7 @@ inside the PortMaster package.
 | libtheora | BSD-3-Clause | Xiph.Org (video, kept enabled per spec §7) |
 | SDL_Sound / SDL2_sound | zlib / LGPL (per release) | only if the pinned AGS build links it |
 | gptokeyb | GPL-3.0 | **provided by PortMaster on-device**, not bundled here |
+| GL4ES (ptitSeb/gl4es) | MIT | bundled `gl4es.aarch64/` (libGL+libEGL); GL→GLES translation so the engine renders on the RK3326/Mali (native SDL KMSDRM can't make GBM/EGL surfaces here) |
 
 > The exact set of bundled `.so` files depends on how the pinned AGS release
 > links its dependencies (static vs shared). The build records every staged
