@@ -30,6 +30,10 @@ back = esc    # Select -> menu (also the quit hotkey modifier)
 l1 = down        # inventory
 r1 = up          # interact
 
+# --- triggers = AGS quick save / load (no name prompt, if the game supports it)
+l2 = f5          # quick save
+r2 = f7          # quick load
+
 # NOTE: do NOT define a hotkey/kill combo here. gptokeyb2 is launched with
 # "-sudokill" (from control.txt on ArkOS), which handles quit (Select+Start)
 # natively. Defining back_start=kill here reserved Start and stopped it from
