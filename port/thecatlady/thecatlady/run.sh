@@ -29,6 +29,15 @@ GAMEDIR="/$directory/ports/thecatlady"
 cd "$GAMEDIR" || exit 1
 mkdir -p "$GAMEDIR/saves" "$GAMEDIR/logs" "$GAMEDIR/config"
 
+# The engine reads its DEFAULT config from the game-data dir (its StartupDir).
+# We must NOT pass --conf: that path makes the engine read ONLY that file and
+# skip the user config (engine.cpp engine_read_config early-return), which is
+# where the player's language choice is persisted on exit. Instead we seed our
+# tuned defaults into gamedata/acsetup.cfg each launch; the user config in
+# saves/ags/<game>/acsetup.cfg is then read on top and overrides (e.g. the
+# chosen translation), so the language persists across launches.
+[ -f "$GAMEDIR/config/acsetup.cfg" ] && cp -f "$GAMEDIR/config/acsetup.cfg" "$GAMEDIR/gamedata/acsetup.cfg"
+
 TAG="${TCL_TAG:-default}"
 GFX="${TCL_GFXDRIVER:-software}"
 AGSBIN="${TCL_AGS_BIN:-ags}"     # allow an alternate engine binary (e.g. ags-gles2)
@@ -97,7 +106,6 @@ pm_platform_helper "$GAMEDIR/bin/$AGSBIN" 2>/dev/null
 echo "----- launching $AGSBIN (gfx=$GFX) -----"
 "$GAMEDIR/bin/$AGSBIN" \
     --no-plugins --fullscreen --gfxdriver "$GFX" \
-    --conf "$GAMEDIR/config/acsetup.cfg" \
     --log-file-path "$GAMEDIR/logs/ags-$TAG.log" --log-file=all:info \
     "$GAMEDIR/gamedata/$MAIN"
 echo "----- $AGSBIN exited: $? -----"

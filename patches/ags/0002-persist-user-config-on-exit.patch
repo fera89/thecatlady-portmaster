@@ -1,0 +1,21 @@
+diff --git a/Engine/main/quit.cpp b/Engine/main/quit.cpp
+index 36e04011d..ca53d87de 100644
+--- a/Engine/main/quit.cpp
++++ b/Engine/main/quit.cpp
+@@ -186,10 +186,13 @@ void quit(const char *quitmsg)
+     String errmsg, fullmsg;
+     QuitReason qreason = quit_check_for_error_state(quitmsg, errmsg, fullmsg);
+ 
+-#if defined (AGS_AUTO_WRITE_USER_CONFIG)
++    // R36S port fix: persist the user's runtime config on normal exit so that an
++    // in-game language change survives across launches. Upstream gates this behind
++    // AGS_AUTO_WRITE_USER_CONFIG via save_config_file(), which is never defined nor
++    // compiled in this build; save_runtime_config_file() is always compiled and
++    // writes "language/translation" to GetGameUserConfigDir()/acsetup.cfg.
+     if (qreason & kQuitKind_NormalExit)
+-        save_config_file();
+-#endif // AGS_AUTO_WRITE_USER_CONFIG
++        save_runtime_config_file();
+ 
+     handledErrorInEditor = false;
+ 

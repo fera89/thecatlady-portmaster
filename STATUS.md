@@ -1,10 +1,13 @@
 # STATUS
 
-Progress report in the spec §36 format. Updated 2026-08-22.
+Progress report in the spec §36 format. Updated 2026-08-24.
+**Outcome: the port is playable on the R36S** — see
+[VERIFIED ON DEVICE](#verified-on-device--playable-2026-08-24) at the bottom.
 
-Build environment: **WSL2 Ubuntu 24.04** (x86_64, glibc 2.39) with an aarch64
-cross toolchain + qemu-user-static. The physical **R36S is available** for the
-on-device milestones.
+Build environment: **WSL2 Ubuntu 24.04** (x86_64) with an aarch64 cross toolchain
++ qemu-user-static; the device-target engine is built in a **Debian bullseye
+arm64 chroot** (glibc 2.31) for a ≤ 2.30 glibc requirement. Verified on a
+physical **R36S**.
 
 ---
 
@@ -126,21 +129,35 @@ target for the actual device package.
   X=Space, dpad/stick=arrows) and documented in R36S-button terms
   (README + docs/CONTROLS.md). `antialias=1` for smoother text.
 
-## NEEDS DEVICE TEST (physical R36S available)
+## VERIFIED ON DEVICE — playable (2026-08-24)
 
-- **M5** The Cat Lady boots to menu · **M6** controller mapping finalised ·
-  **M7** gameplay systems (rooms/dialog/inventory/speech/music/SFX/save/load/
-  Portuguese/exit) · **M8** endurance · sprite-cache tuning after measuring
-  `VmRSS`/`VmHWM` (spec §22).
-- Record results in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and save at
-  least one real device log (spec §27).
+Signed off on the user's physical R36S (ArkOS / dArkOS base):
 
-## NEXT (recommended order)
+- **M5 boot / M6 controls / M7 gameplay — PASS.** Boots to the menu at 640×480,
+  GPU-accelerated via the native GLES2 build; rooms, dialogue, inventory, speech,
+  music, SFX and the Theora intro all play. Final controller mapping
+  (A=Enter, B/Start=Esc, X=Space, Y/R1=Up, L1=Down, d-pad/stick=arrows) verified
+  and documented in R36S-button terms (README + docs/CONTROLS.md).
+- **Quick save / load — PASS.** `L2 = F1` (quick **save**), `R2 = F5` (quick
+  **load**) — sidesteps the on-screen save-name prompt (no keyboard on the
+  handheld). Confirmed working on device.
+- **Persistent language — PASS.** Ships in **English** by default; the player's
+  in-game language choice now **persists across launches**. This needed two
+  engine/launcher fixes:
+  1. **Write the choice.** Upstream gates `save_config_file()` behind
+     `AGS_AUTO_WRITE_USER_CONFIG` (never defined, no implementation), so the user
+     config was never written on exit. Patched `quit()` to call
+     `save_runtime_config_file()` on normal exit → writes
+     `language/translation` to `saves/ags/<game>/acsetup.cfg`
+     (`patches/ags/0002-persist-user-config-on-exit.patch`).
+  2. **Read the choice back.** The launcher used `--conf`, but AGS's
+     `engine_read_config()` reads *only* that file and skips the user config
+     (early `return`). Dropped `--conf`; the launcher now seeds the tuned
+     defaults into `gamedata/acsetup.cfg` (the engine's StartupDir config), and
+     the user config is layered on top — so the saved language wins.
 
-1. **Boot on device (M5).** Put the card back in the R36S, open Ports → "The Cat
-   Lady". Expect: title/menu at 640×480. Grab `thecatlady/logs/ags.log` +
-   `launcher.log` if anything is off.
-2. **M6 controls** — verify/adjust `thecatlady.gptk` (mapping is provisional).
-3. **M7 gameplay** — rooms/dialog/inventory/speech/music/SFX/save/load/
-   Portuguese/exit; **M8** endurance. Fill the compatibility matrix.
-4. Add `screenshot.png` / `cover.png` for PortMaster before any submission.
+## Optional polish (not blocking)
+
+- Sprite-cache tuning from real `VmRSS`/`VmHWM` (kept at the 128 MB game default;
+  runs fine as-is).
+- Add `screenshot.png` / `cover.png` before any PortMaster submission.
