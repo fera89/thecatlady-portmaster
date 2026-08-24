@@ -29,10 +29,7 @@ back = esc    # Select -> menu (also the quit hotkey modifier)
 # --- shoulders (handy duplicates) ------------------------------------------
 l1 = down        # inventory
 r1 = up          # interact
-
-# --- triggers = AGS quick save / load (no name prompt, if the game supports it)
-l2 = f5          # quick save
-r2 = f7          # quick load
+# (L2/R2 left unmapped: The Cat Lady has no working F5/F7 quicksave.)
 
 # NOTE: do NOT define a hotkey/kill combo here. gptokeyb2 is launched with
 # "-sudokill" (from control.txt on ArkOS), which handles quit (Select+Start)
