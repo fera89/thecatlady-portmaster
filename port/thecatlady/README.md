@@ -48,7 +48,12 @@ these R36S buttons:
 | **A** | Confirm / choose dialogue option |
 | **X** | Skip dialogue |
 | **B** or **Start** | Save / load menu |
+| **L2** | Quick **save** |
+| **R2** | Quick **load** |
 | **Select + Start** (hold) | Quit back to PortMaster |
+
+The game ships in **English**; you can change the language in its menu and your
+choice is remembered on the next launch.
 
 ## Notes
 
