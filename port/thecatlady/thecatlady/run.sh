@@ -41,7 +41,10 @@ mkdir -p "$GAMEDIR/saves" "$GAMEDIR/logs" "$GAMEDIR/config"
 TAG="${TCL_TAG:-default}"
 GFX="${TCL_GFXDRIVER:-software}"
 AGSBIN="${TCL_AGS_BIN:-ags}"     # allow an alternate engine binary (e.g. ags-gles2)
-LOG="$GAMEDIR/logs/run-$TAG.log"
+# Log to $GAMEDIR/log.txt — the standard location PortMaster (and testers) look
+# for. Everything below, including the engine's own log (via --log-stdout), is
+# tee'd here so a single log.txt captures the whole run for troubleshooting.
+LOG="$GAMEDIR/log.txt"
 : > "$LOG" && exec > >(tee "$LOG") 2>&1
 
 echo "===== The Cat Lady [$TAG]  $(date '+%F %T') ====="
@@ -104,9 +107,11 @@ $GPTOKEYB "$AGSBIN" -c "$GAMEDIR/thecatlady.gptk" &
 pm_platform_helper "$GAMEDIR/bin/$AGSBIN" 2>/dev/null
 
 echo "----- launching $AGSBIN (gfx=$GFX) -----"
+# --log-stdout mirrors the engine log into our tee'd log.txt (one file has it
+# all); --log-file-path also keeps a clean engine-only log under logs/.
 "$GAMEDIR/bin/$AGSBIN" \
     --no-plugins --fullscreen --gfxdriver "$GFX" \
-    --log-file-path "$GAMEDIR/logs/ags-$TAG.log" --log-file=all:info \
+    --log-file-path "$GAMEDIR/logs/ags.log" --log-file=all:info --log-stdout=all:info \
     "$GAMEDIR/gamedata/$MAIN"
 echo "----- $AGSBIN exited: $? -----"
 
