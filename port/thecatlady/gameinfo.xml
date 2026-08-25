@@ -14,7 +14,7 @@
     <genre>Adventure / Horror</genre>
     <players>1</players>
     <image>./screenshot.png</image>
-    <thumbnail>./cover.png</thumbnail>
+    <thumbnail>./cover.jpg</thumbnail>
     <rtr>false</rtr>
   </game>
 </gameList>
