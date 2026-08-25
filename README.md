@@ -44,6 +44,9 @@ Full notes: [docs/CONTROLS.md](docs/CONTROLS.md).
 
 ## Install (the easy way)
 
+> New to this? Follow the illustrated **[beginner's install guide →](INSTALL.md)**
+> (PC + Steam + R36S, step by step).
+
 1. Download the latest **`thecatlady-portmaster.zip`** from
    [Releases](../../releases).
 2. Unzip into your device's `/roms/ports/` (or `ports/` on the ports partition).
