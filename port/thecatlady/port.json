@@ -9,7 +9,7 @@
   "attr": {
     "title": "The Cat Lady",
     "porter": [
-      "thecatlady-r36s project"
+      "fera89"
     ],
     "desc": "Native AArch64 port of the psychological horror adventure The Cat Lady, running on an open-source Adventure Game Studio engine. No x86 emulation. Requires you to copy the data files from your own legally-owned copy of the game.",
     "desc_md": null,
